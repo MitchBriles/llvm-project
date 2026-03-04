@@ -1,0 +1,9 @@
+#ifndef ELF_RELOC
+#error "ELF_RELOC must be defined"
+#endif
+
+#undef R_PDP11_NONE
+
+// No relocation
+
+ELF_RELOC(R_PDP11_NONE, 0)

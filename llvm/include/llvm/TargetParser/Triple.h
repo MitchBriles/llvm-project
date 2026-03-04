@@ -69,6 +69,7 @@ public:
     mips64,      // MIPS64: mips64, mips64r6, mipsn32, mipsn32r6
     mips64el,    // MIPS64EL: mips64el, mips64r6el, mipsn32el, mipsn32r6el
     msp430,      // MSP430: msp430
+    pdp11,       // PDP-11: 16-bit
     ppc,         // PPC: powerpc
     ppcle,       // PPCLE: powerpc (little endian)
     ppc64,       // PPC64: powerpc64, ppu
@@ -1087,6 +1088,9 @@ public:
   bool isMIPS() const {
     return isMIPS32() || isMIPS64();
   }
+
+  // Tests whether the target is PDP-11
+  bool isPDP11() const { return getArch() == Triple::pdp11; }
 
   /// Tests whether the target is PowerPC (32- or 64-bit LE or BE).
   bool isPPC() const {

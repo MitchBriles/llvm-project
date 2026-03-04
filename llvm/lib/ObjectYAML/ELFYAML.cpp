@@ -210,6 +210,7 @@ void ScalarEnumerationTraits<ELFYAML::ELF_EM>::enumeration(
   ECase(EM_VPP500);
   ECase(EM_SPARC32PLUS);
   ECase(EM_960);
+  ECase(EM_PDP11);
   ECase(EM_PPC);
   ECase(EM_PPC64);
   ECase(EM_S390);
@@ -971,6 +972,9 @@ void ScalarEnumerationTraits<ELFYAML::ELF_REL>::enumeration(
     break;
   case ELF::EM_CSKY:
 #include "llvm/BinaryFormat/ELFRelocs/CSKY.def"
+    break;
+  case ELF::EM_PDP11:
+#include "llvm/BinaryFormat/ELFRelocs/PDP11.def"
     break;
   case ELF::EM_PPC:
 #include "llvm/BinaryFormat/ELFRelocs/PowerPC.def"

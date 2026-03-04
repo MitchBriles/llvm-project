@@ -175,6 +175,15 @@ static uint64_t resolveMSP430(uint64_t Type, uint64_t Offset, uint64_t S,
   }
 }
 
+static bool supportsPDP11(uint64_t Type) { return Type == ELF::R_PDP11_NONE; }
+
+static uint64_t resolvePDP11(uint64_t Type, uint64_t Offset, uint64_t S,
+                             uint64_t /*LocData*/, int64_t Addend) {
+  if (Type == ELF::R_PDP11_NONE)
+    return S + Addend;
+  llvm_unreachable("Invalid relocation type");
+}
+
 static bool supportsPPC64(uint64_t Type) {
   switch (Type) {
   case ELF::R_PPC64_ADDR32:
@@ -828,6 +837,8 @@ getRelocationResolver(const ObjectFile &Obj) {
     switch (Obj.getArch()) {
     case Triple::x86:
       return {supportsX86, resolveX86};
+    case Triple::pdp11:
+      return {supportsPDP11, resolvePDP11};
     case Triple::ppcle:
     case Triple::ppc:
       return {supportsPPC32, resolvePPC32};

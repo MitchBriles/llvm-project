@@ -404,6 +404,11 @@ enum {
 #include "ELFRelocs/i386.def"
 };
 
+// ELF Relocation type for PDP-11.
+enum {
+#include "ELFRelocs/PDP11.def"
+};
+
 // ELF Relocation types for PPC32
 enum {
 #include "ELFRelocs/PowerPC.def"

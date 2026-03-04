@@ -54,6 +54,8 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case msp430:         return "msp430";
   case nvptx64:        return "nvptx64";
   case nvptx:          return "nvptx";
+  case pdp11:
+    return "pdp11";
   case ppc64:          return "powerpc64";
   case ppc64le:        return "powerpc64le";
   case ppc:            return "powerpc";
@@ -189,6 +191,9 @@ StringRef Triple::getArchTypePrefix(ArchType Kind) {
   case thumbeb:     return "arm";
 
   case avr:         return "avr";
+
+  case pdp11:
+    return "pdp11";
 
   case ppc64:
   case ppc64le:
@@ -474,6 +479,7 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
       .Case("mips64", mips64)
       .Case("mips64el", mips64el)
       .Case("msp430", msp430)
+      .Case("pdp11", pdp11)
       .Case("ppc64", ppc64)
       .Case("ppc32", ppc)
       .Case("ppc", ppc)
@@ -599,6 +605,7 @@ static Triple::ArchType parseArch(StringRef ArchName) {
           // FIXME: Do we need to support these?
           .Cases({"i786", "i886", "i986"}, Triple::x86)
           .Cases({"amd64", "x86_64", "x86_64h"}, Triple::x86_64)
+          .Case("pdp11", Triple::pdp11)
           .Cases({"powerpc", "powerpcspe", "ppc", "ppc32"}, Triple::ppc)
           .Cases({"powerpcle", "ppcle", "ppc32le"}, Triple::ppcle)
           .Cases({"powerpc64", "ppu", "ppc64"}, Triple::ppc64)
@@ -1016,6 +1023,7 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::msp430:
   case Triple::nvptx64:
   case Triple::nvptx:
+  case Triple::pdp11:
   case Triple::ppc64le:
   case Triple::ppcle:
   case Triple::r600:
@@ -1738,6 +1746,7 @@ unsigned Triple::getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
 
   case llvm::Triple::avr:
   case llvm::Triple::msp430:
+  case llvm::Triple::pdp11:
     return 16;
 
   case llvm::Triple::aarch64_32:
@@ -1845,6 +1854,7 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::bpfeb:
   case Triple::bpfel:
   case Triple::msp430:
+  case Triple::pdp11:
   case Triple::systemz:
   case Triple::ve:
     T.setArch(UnknownArch);
@@ -1932,6 +1942,7 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::lanai:
   case Triple::m68k:
   case Triple::msp430:
+  case Triple::pdp11:
   case Triple::r600:
   case Triple::shave:
   case Triple::sparcel:
@@ -2138,6 +2149,7 @@ bool Triple::isLittleEndian() const {
   case Triple::msp430:
   case Triple::nvptx64:
   case Triple::nvptx:
+  case Triple::pdp11:
   case Triple::ppcle:
   case Triple::ppc64le:
   case Triple::r600:
