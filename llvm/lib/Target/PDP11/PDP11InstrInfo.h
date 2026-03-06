@@ -29,6 +29,11 @@ class PDP11InstrInfo : public PDP11GenInstrInfo {
 public:
   explicit PDP11InstrInfo(const PDP11Subtarget &STI);
 
+  void copyPhysReg(MachineBasicBlock &MBB, MachineBasicBlock::iterator MBBI,
+                   const DebugLoc &DL, Register DestReg, Register SrcReg,
+                   bool KillSrc, bool RenamableDest = false,
+                   bool RenamableSrc = false) const override;
+
   // getRegisterInfo - TargetInstrInfo is a superset of MRegister info.  As
   // such, whenever a client has an instance of instruction info, it should
   // always be able to get register info as well (through this method).

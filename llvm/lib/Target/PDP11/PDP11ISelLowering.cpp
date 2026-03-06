@@ -59,6 +59,25 @@ SDValue PDP11TargetLowering::LowerFormalArguments(
     SDValue Chain, CallingConv::ID CallConv, bool IsVarArg,
     const SmallVectorImpl<ISD::InputArg> &Ins, const SDLoc &DL,
     SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals) const {
+  if (IsVarArg)
+    report_fatal_error("PDP11 LowerFormalArguments: varargs are not supported");
+
+  for (unsigned I = 0; I < Ins.size(); ++I) {
+    if (Ins[I].VT != MVT::i16)
+      report_fatal_error(
+          "PDP11 LowerFormalArguments: only i16 arguments are supported");
+
+    // Unix/PDP-11 ABI stack layout after prologue:
+    // 0(r5) saved old r5, 2(r5) return address, then args at 4(r5), 6(r5), ...
+    int64_t ArgOffset = 4 + static_cast<int64_t>(I) * 2;
+    SDValue FP = DAG.getRegister(PDP11::R5, MVT::i16);
+    SDValue Addr = DAG.getNode(ISD::ADD, DL, MVT::i16, FP,
+                               DAG.getConstant(ArgOffset, DL, MVT::i16));
+    SDValue ArgValue = DAG.getLoad(MVT::i16, DL, Chain, Addr, MachinePointerInfo());
+    InVals.push_back(ArgValue);
+    Chain = ArgValue.getValue(1);
+  }
+
   return Chain;
 }
 
@@ -68,13 +87,35 @@ PDP11TargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
                                  const SmallVectorImpl<ISD::OutputArg> &Outs,
                                  const SmallVectorImpl<SDValue> &OutVals,
                                  const SDLoc &DL, SelectionDAG &DAG) const {
-  return SDValue();
+  if (Outs.size() > 1)
+    report_fatal_error(
+        "PDP11 LowerReturn: only a single return value is supported");
+
+  SDValue Glue;
+  SmallVector<SDValue, 4> RetOps(1, Chain);
+  SDValue PC = DAG.getRegister(PDP11::R7, MVT::i16);
+  RetOps.push_back(PC);
+
+  if (!Outs.empty()) {
+    if (Outs[0].VT != MVT::i16)
+      report_fatal_error("PDP11 LowerReturn: only i16 returns are supported");
+
+    Chain = DAG.getCopyToReg(Chain, DL, PDP11::R0, OutVals[0], Glue);
+    Glue = Chain.getValue(1);
+    RetOps.push_back(DAG.getRegister(PDP11::R0, MVT::i16));
+  }
+
+  RetOps[0] = Chain;
+  if (Glue)
+    RetOps.push_back(Glue);
+
+  return DAG.getNode(PDP11ISD::RTS, DL, MVT::Other, RetOps);
 }
 
 const char *PDP11TargetLowering::getTargetNodeName(unsigned Opcode) const {
   switch (Opcode) {
-  case PDP11ISD::RET:
-    return "PDP11::RET";
+  case PDP11ISD::RTS:
+    return "PDP11::RTS";
   default:
     return nullptr;
   }

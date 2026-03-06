@@ -24,8 +24,8 @@ namespace PDP11ISD {
 enum {
   FIRST_NUMBER = ISD::BUILTIN_OP_END,
 
-  // Return with a glue operand. Operand 0 is the chain operand.
-  RET,
+  // Return from subroutine
+  RTS,
 
   /// Wrapper - A wrapper node for TargetConstantPool, TargetExternalSymbol,
   /// and TargetGlobalAddress.

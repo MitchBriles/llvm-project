@@ -39,6 +39,17 @@
 using namespace llvm;
 
 namespace {
+static const char *getUnixRegName(MCRegister Reg) {
+  switch (Reg.id()) {
+  case PDP11::R6:
+    return "sp";
+  case PDP11::R7:
+    return "pc";
+  default:
+    return PDP11InstPrinter::getRegisterName(Reg);
+  }
+}
+
 class PDP11AsmPrinter : public AsmPrinter {
 public:
   explicit PDP11AsmPrinter(TargetMachine &TM,
@@ -67,7 +78,7 @@ void PDP11AsmPrinter::printOperand(const MachineInstr *MI, int OpNum,
 
   switch (MO.getType()) {
   case MachineOperand::MO_Register:
-    O << PDP11InstPrinter::getRegisterName(MO.getReg());
+    O << getUnixRegName(MO.getReg());
     break;
 
   case MachineOperand::MO_Immediate:

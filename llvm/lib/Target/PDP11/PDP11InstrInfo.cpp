@@ -31,3 +31,16 @@ PDP11InstrInfo::PDP11InstrInfo(const PDP11Subtarget &STI)
                         /*CatchRetOpcode=*/0,
                         /*ReturnOpcode=*/PDP11::RET),
       RI() {}
+
+void PDP11InstrInfo::copyPhysReg(MachineBasicBlock &MBB,
+                                 MachineBasicBlock::iterator MBBI,
+                                 const DebugLoc &DL, Register DestReg,
+                                 Register SrcReg, bool KillSrc,
+                                 bool RenamableDest,
+                                 bool RenamableSrc) const {
+  MachineInstrBuilder MIB =
+      BuildMI(MBB, MBBI, DL, get(PDP11::MOVrr), DestReg)
+          .addReg(SrcReg, getKillRegState(KillSrc));
+  MIB->getOperand(0).setIsRenamable(RenamableDest);
+  MIB->getOperand(1).setIsRenamable(RenamableSrc);
+}

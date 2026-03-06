@@ -35,12 +35,14 @@ PDP11RegisterInfo::PDP11RegisterInfo() : PDP11GenRegisterInfo(PDP11::R7) {}
 
 const MCPhysReg *
 PDP11RegisterInfo::getCalleeSavedRegs(const MachineFunction * /*MF*/) const {
-  static const MCPhysReg CalleeSavedRegs[] = {PDP11::R5, PDP11::R4, 0};
+  static const MCPhysReg CalleeSavedRegs[] = {0};
   return CalleeSavedRegs;
 }
 
-BitVector PDP11RegisterInfo::getReservedRegs(const MachineFunction &MF) const {
+BitVector
+PDP11RegisterInfo::getReservedRegs(const MachineFunction & /*MF*/) const {
   BitVector Reserved(getNumRegs());
+  Reserved.set(PDP11::R5); // FP
   Reserved.set(PDP11::R6); // SP
   Reserved.set(PDP11::R7); // PC
   return Reserved;
@@ -55,5 +57,5 @@ bool PDP11RegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
 
 Register
 PDP11RegisterInfo::getFrameRegister(const MachineFunction & /*MF*/) const {
-  return PDP11::R6;
+  return PDP11::R5;
 }

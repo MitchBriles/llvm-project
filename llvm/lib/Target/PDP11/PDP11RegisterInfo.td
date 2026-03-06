@@ -34,6 +34,6 @@ class PDP11RegisterClass<list<ValueType> Types, int S, int Alignment,
   let CopyCost = CC;
 }
 
-def GPR : PDP11RegisterClass<[i16], 16, 16, (add (sequence "R%u", 0, 7))>;
+def GPR : PDP11RegisterClass<[i16], 16, 16, (add R0, R1, R2, R3, R4, R5, R6, R7)>;
 
 def GPROperand : RegisterOperand<GPR>;

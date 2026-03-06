@@ -29,14 +29,25 @@ using namespace llvm;
 #define PRINT_ALIAS_INSTR
 #include "PDP11GenAsmWriter.inc"
 
+static const char *getUnixRegName(MCRegister Reg) {
+  switch (Reg.id()) {
+  case PDP11::R6:
+    return "sp";
+  case PDP11::R7:
+    return "pc";
+  default:
+    return PDP11InstPrinter::getRegisterName(Reg);
+  }
+}
+
 void PDP11InstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
                                     raw_ostream &OS, const char *Modifier) {
   assert((Modifier == nullptr || Modifier[0] == 0) && "No modifiers supported");
   const MCOperand &Op = MI->getOperand(OpNo);
   if (Op.isReg())
-    OS << "%" << getRegisterName(Op.getReg());
+    OS << getUnixRegName(Op.getReg());
   else if (Op.isImm())
-    OS << formatHex(Op.getImm());
+    OS << Op.getImm();
   else {
     assert(Op.isExpr() && "Expected an expression");
     Op.print(OS);

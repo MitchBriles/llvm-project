@@ -15,6 +15,15 @@
 //===----------------------------------------------------------------------===//
 
 // PDP11 C Calling convention.
-def CC_PDP11 : CallingConv<[]>;
+// All integer args are passed by value on stack in 16-bit slots.
+def CC_PDP11 : CallingConv<[
+  CCIfType<[i8], CCPromoteToType<i16>>,
+  CCIfType<[i16], CCAssignToStack<2, 2>>
+]>;
+
 // PDP11 C return-value convention.
-def RetCC_PDP11 : CallingConv<[]>;
+def RetCC_PDP11 : CallingConv<[
+  CCIfType<[i8], CCAssignToReg<[R0]>>,
+  CCIfType<[i16], CCAssignToReg<[R0]>>,
+  CCIfType<[i32], CCAssignToReg<[R0, R1]>>
+]>;
